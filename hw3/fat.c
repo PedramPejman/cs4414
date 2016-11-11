@@ -212,20 +212,45 @@ EntryNode *fs_ls(Cursor *cursor, Word *args) {
   return head;
 }
 
-void fs_cd(Cursor *cursor, Word *args) {
+void fs_cd(Cursor *cursor, Word *path) {
   if (!cursor->current->children) 
     cursor->current->children = fs_ls(cursor, NULL);
 
-  EntryNode *next_dir = get_entry_for(cursor->current, args->token);
+  EntryNode *next_dir = get_entry_for(cursor->current, path->token);
   if (!next_dir) {
     disp_error(CODE_6, NULL, 0);
     return;
   }
   cursor->current = next_dir;
-  if (args->next) fs_cd(cursor, args->next);
+  
+  // Update cursor path
+  if (strcmp(path->token, "..") == 0) {
+    Word *prev = path;
+    Word *next = path->next;
+    while (next) {
+      prev = next;
+      next = next->next; 
+    }
+    prev->next=NULL;
+  }
+  
+  else {
+    if (cursor->path->token) {printf("withpath");} else {printf("nopath");}
+    Word *head = cursor->path;
+    printf("1");
+    while (head->next) { head = head->next;}
+    head->next = path;
+  }
+
+  if (path->next) fs_cd(cursor, path->next);
 }
 
 
+void fs_cpin(Cursor *cursor, Word *args) {
+  
+}
 
-
+void fs_cpout(Cursor *cursor, Word *args) {
+  
+}
 

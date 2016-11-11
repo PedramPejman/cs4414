@@ -5,15 +5,15 @@ void init_word(Word *word, char *tok) {
   word->token = tok;
 }
 
-int init_command(Command *command, char *str) {
-  memset(command, 0, sizeof(Command));
+int init_input(Input *input, char *str) {
+  memset(input, 0, sizeof(Input));
   int length = strlen(str);
-  command->string = (char *)malloc((length + 1) * sizeof(char));
-  strcpy(command->string, str);
+  input->string = (char *)malloc((length + 1) * sizeof(char));
+  strcpy(input->string, str);
 }
 
-int destruct_command(Command *command) {
-  Word *current = command->words;
+int destruct_input(Input *input) {
+  Word *current = input->words;
   Word *prev;
   while (current) {
     prev = current;
@@ -22,7 +22,7 @@ int destruct_command(Command *command) {
   }
 
   // Free underlying string
-  free(command->string);
+  free(input->string);
 }
 
 
@@ -32,8 +32,8 @@ void print_chars(char *s) {
 		s++;
 	}
 }
-void print_command(Command *command) {
-	Word *word = command->words;
+void print_input(Input *input) {
+	Word *word = input->words;
 	printf("[");
 	while (word) {
 		print_chars(word->token);
@@ -43,21 +43,21 @@ void print_command(Command *command) {
 	printf("]\n");
 }
 
-// tokenize_command tokenizes the input based on empty spaces
-int tokenize_command(Command *command) {
+// tokenize_input tokenizes the input based on empty spaces
+int tokenize_input(Input *input) {
   // Error checking for beg and end tokens
-  int end_position = strlen(command->string) - 2;
+  int end_position = strlen(input->string) - 2;
 
-  // Start retrieving the tokens and init commands
-  char *nextWord = strtok(command->string, "/ \n");
+  // Start retrieving the tokens and init inputs
+  char *nextWord = strtok(input->string, "/ \n");
   if (!nextWord) {
     return 0;
   }
   Word *word = (Word *)malloc(sizeof(Word));
   word->token = nextWord;
   word->next = NULL;
-  command->length=1;
-  command->words = word;
+  input->length=1;
+  input->words = word;
 
   //Now go through the rest and append them to the linked list
   nextWord = strtok(NULL, "/ \n");
@@ -66,35 +66,38 @@ int tokenize_command(Command *command) {
     word = word->next;
     word->token = nextWord;
     word->next = NULL;
-    command->length++;
+    input->length++;
     nextWord = strtok(NULL, "/ \n");
   }
 
   return 0;
 }
 
-// parses a string and returns a command type
-int get_command(char *str) {
+// parses a string and returns a input type
+int get_input(char *str) {
   if (strcmp(str, "ls") == 0) return LS;
   if (strcmp(str, "exit") == 0) return EXIT;
   if (strcmp(str, "cd") == 0) return CD;
   if (strcmp(str, "cpout") == 0) return CPOUT;
-  if (strcmp(str, "coin") == 0) return CPIN;
+  if (strcmp(str, "cpin") == 0) return CPIN;
   return INVALID;
 }
 
-// Executes the command
-void execute_command(Cursor *cursor, Command *command) {
+// Executes the input
+void execute_input(Cursor *cursor, Input *input) {
 	EntryNode *parent_node;
-  Word *word = command->words;
+  Word *word = input->words;
 
-  switch (get_command(word->token)) {
+  switch (get_input(word->token)) {
     case LS:
       parent_node->children = fs_ls(cursor, word->next);
 	  	display_children(parent_node);
       break;
     case CD:
       fs_cd(cursor, word->next);
+      break;
+    case CPIN:
+      fs_cpin(cursor, word->next);
       break;
     case EXIT:
       exit(0);
@@ -104,5 +107,14 @@ void execute_command(Cursor *cursor, Command *command) {
   }
 }
 
-
+void print_shell_prompt(Cursor *cursor) {
+  printf(":");
+  Word *head = cursor->path;
+  if (!cursor->path) printf("/");
+  while (head) {
+    printf("/%s", head->token);
+    head = head->next;
+  }
+  printf(">");
+}
 

@@ -15,5 +15,5 @@ enum commands_t {
 
 
 void run_shell(Cursor *cursor);
-
+void print_shell_prompt(Cursor *cursor);
 #endif

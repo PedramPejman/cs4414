@@ -15,16 +15,14 @@ void run_shell(Cursor *cursor) {
 	EntryNode *current = malloc(sizeof(EntryNode));
 	current->isRoot = 1;
   cursor->current = current;
+  cursor->path = malloc(sizeof(Word));
 	current->children = fs_ls(cursor, NULL);
   
 	char buffer[COMMAND_LENGTH];
-  	Command command;
+  	Input input;
   	while (!feof(stdin)) {
 
 	    // Prompt the user
-      //printf("In DIR:\n");
-      //display_children(cursor->current);
-
 	    printf(SHELL_PROMPT);
 	    fflush(stdout);
 
@@ -32,17 +30,17 @@ void run_shell(Cursor *cursor) {
 	    memset(buffer, 0, COMMAND_LENGTH);
 	    fgets(buffer, COMMAND_LENGTH, stdin);
 
-	    // Initialize the command
-	    init_command(&command, buffer);
+	    // Initialize the input
+	    init_input(&input, buffer);
 	    
 	    // Parse our input and check for errors
-	    tokenize_command(&command);
+	    tokenize_input(&input);
 
 	    //DO IT
-	    execute_command(cursor, &command);
+	    execute_input(cursor, &input);
 
 	    // Deallocate any internal memory
-	    destruct_command(&command);
+	    destruct_input(&input);
   	}
 
 }

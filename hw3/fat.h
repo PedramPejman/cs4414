@@ -15,7 +15,6 @@
 #define NUM_FATS 2
 #define MAX_NAME_LENGTH 11
 #define SPACE 0x20
-#define SHELL_PROMPT ":/> "
 
 // LinkedList structure for modeling tokens
 typedef struct word_t {
@@ -23,15 +22,17 @@ typedef struct word_t {
   struct word_t *next;
 } Word;
 
-typedef struct command_t{
-  // First word is the command
+typedef struct input_t{
+  // First word is the input
   // All words thereafter are the argument tokenized
   // ex: ls d1/d2 := [ls]->[d1]->[d2]
+  
   Word *words;
+
   char    *string;
   char    *cmd;
   int     length;
-} Command;
+} Input;
 
 enum attributes_t{
     DIR_ATTR_READONLY = 1 << 0,
@@ -49,7 +50,7 @@ typedef enum {
     CODE_2, // Error seeking file
     CODE_3, // Error reading file
     CODE_4, // Invalid FAT information
-    CODE_5, // Invalid command
+    CODE_5, // Invalid input
     CODE_6, // Directory does not exist
 } Error;
 
@@ -101,6 +102,7 @@ typedef struct {
   FILE *fat_file;
   BPB *bpb;
   EntryNode *current;
+  Word *path;
 } Cursor;
 
 /************ Helpers ***********/
