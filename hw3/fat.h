@@ -15,6 +15,7 @@
 #define NUM_FATS 2
 #define MAX_NAME_LENGTH 11
 #define SPACE 0x20
+#define SHELL_PROMPT ":/> "
 
 // LinkedList structure for modeling tokens
 typedef struct word_t {

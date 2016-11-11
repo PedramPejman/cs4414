@@ -197,8 +197,14 @@ EntryNode *fs_ls(Cursor *cursor, Word *args) {
   if (args) {
 		current->children = head;
     EntryNode *next_dir = get_entry_for(current, args->token);
+    if (!next_dir) {
+      disp_error(CODE_6, NULL, 0);
+      free(next_dir);
+      return;
+    }
     cursor->current = next_dir;
     EntryNode *result = fs_ls(cursor, args->next);
+    free(next_dir);
     cursor->current = current;
     return result;
 	}
