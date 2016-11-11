@@ -60,10 +60,8 @@ void init_boot_sector(BPB *boot_sector, FILE *file) {
 void print_cluster(FILE *f, BPB *bpb, Fat16Entry *entry) {
     const uint32_t cluster_size = bpb->bytes_per_sector * bpb->sectors_per_cluster;
     uint16_t c;
-    printf("size:%d\n",entry->starting_cluster);fflush(stdout);
 
     for(c = entry->starting_cluster; c < 0xFFF8; c = get_next_cluster(f, bpb, c)) {
-        printf("next\n");fflush(stdout);
         char buf[cluster_size];
         read_bytes(f, data_address(bpb) + (c - 2) * cluster_size, sizeof(buf), buf);
         printf("%.*s", (int)(sizeof(buf)), buf);
@@ -194,11 +192,9 @@ EntryNode *fs_ls(Cursor *cursor, Word *args) {
 		previous = node;		
 	}
 
-  printf("3");fflush(stdout);
   // If there are arguments, recurse down without mutating 
   // the state of the cursor
   if (args) {
-    printf("3.5");fflush(stdout);
 		current->children = head;
     EntryNode *next_dir = get_entry_for(current, args->token);
     cursor->current = next_dir;
@@ -207,7 +203,6 @@ EntryNode *fs_ls(Cursor *cursor, Word *args) {
     return result;
 	}
   
-  printf("4");fflush(stdout);
   return head;
 }
 

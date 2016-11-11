@@ -75,6 +75,7 @@ int tokenize_command(Command *command) {
   }
   Word *word = (Word *)malloc(sizeof(Word));
   word->token = nextWord;
+  word->next = NULL;
   command->length=1;
   command->words = word;
 
