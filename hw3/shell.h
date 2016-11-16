@@ -4,6 +4,7 @@
 #include "fat.h"
 
 #define COMMAND_LENGTH 128
+#define SHELL_PROMPT ":/>"
 enum commands_t {
   LS,
   CD,

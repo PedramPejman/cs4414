@@ -16,6 +16,8 @@ void run_shell(Cursor *cursor) {
 	current->isRoot = 1;
   cursor->current = current;
   cursor->path = malloc(sizeof(Word));
+  cursor->path->token = "/";
+  cursor->path->next = NULL;
 	current->children = fs_ls(cursor, NULL);
   
 	char buffer[COMMAND_LENGTH];
@@ -69,6 +71,7 @@ int main(int argc, char **argv) {
 	
 	// Clean up
 	fclose(fat_file);
+
   //free_cursor(cursor);
 	return 0;
 }

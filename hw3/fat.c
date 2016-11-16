@@ -225,26 +225,35 @@ void fs_cd(Cursor *cursor, Word *path) {
   
   // Update cursor path
   if (strcmp(path->token, "..") == 0) {
-    Word *prev = path;
+  /*  Word *prev = path;
     Word *next = path->next;
     while (next) {
       prev = next;
       next = next->next; 
     }
-    prev->next=NULL;
+    prev->next=NULL;*/
   }
   
   else {
-    if (cursor->path->token) {printf("withpath");} else {printf("nopath");}
+    print_word(cursor->path);
     Word *head = cursor->path;
-    printf("1");
-    while (head->next) { head = head->next;}
+    while (head->next) {head = head->next;}
     head->next = path;
+    head->next->next = NULL;
+    print_word(cursor->path);
   }
 
   if (path->next) fs_cd(cursor, path->next);
 }
 
+void print_word(Word *word) {
+  printf("[");
+  while (word) {
+    printf("%s", word->token);
+    word = word->next;
+  }
+  printf("]\n");
+}
 
 void fs_cpin(Cursor *cursor, Word *args) {
   
